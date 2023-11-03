@@ -5,8 +5,7 @@
 #include "boards.h"
 
 #define ID_SIZE 4
-#define BUTTON_PIN BSP_BUTTON_0 // Assuming there is a BUTTON_0 defined in boards.h
-
+#define BUTTON_PIN NRF_GPIO_PIN_MAP(1,6) 
 void led_on(uint32_t led_pin) {
     nrf_gpio_pin_set(led_pin);
 }
@@ -26,18 +25,18 @@ bool is_button_pressed() {
 int main(void)
 {
     int blink_pattern[ID_SIZE] = {7, 2, 0, 3};
-    int current_led = 0; // Start from the first LED
-    int blink_count = 0; // Blink count for the current LED
+    int current_led = 0; 
+    int blink_count = 0; 
 
     // Initialize button and LEDs
     bsp_board_init(BSP_INIT_LEDS);
-    nrf_gpio_cfg_input(BUTTON_PIN, NRF_GPIO_PIN_PULLUP); // Configure the button with a pull-up resistor
+    nrf_gpio_cfg_input(BUTTON_PIN, NRF_GPIO_PIN_PULLUP); 
 
     while (true)
     {
         if (is_button_pressed())
         {
-            // If button is pressed and we have not finished blinking the current LED
+            
             printf("Button is pressed.\n");
             if (blink_count < blink_pattern[current_led])
             {
@@ -49,21 +48,21 @@ int main(void)
             }
             else
             {
-                // Move to the next LED and reset blink count
+               
                 current_led = (current_led + 1) % ID_SIZE;
                 blink_count = 0;
-                nrf_delay_ms(2000); // Delay between different LEDs
+                nrf_delay_ms(2000); 
             }
         }
         else
         {
-            // If button is not pressed, ensure all LEDs are off and maintain current state
+            
             for (int i = 0; i < ID_SIZE; i++)
             {
                 led_off(i);
             }
-            blink_count = blink_pattern[current_led] > 0 ? blink_count : 0; // Reset blink_count only if it finished for the current led
-            // No delay here as we want to check the button state continuously
+            blink_count = blink_pattern[current_led] > 0 ? blink_count : 0; 
+           
         }
     }
 }
